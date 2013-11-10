@@ -36,8 +36,11 @@ body {
     width:100%;
     text-align: center;
     height: 25px;
-
+    min-height: 50px;
     margin-bottom: 25px;
+}
+.btn{
+    z-index: 8;
 }
 
 /*                            #fullscreenButton {
