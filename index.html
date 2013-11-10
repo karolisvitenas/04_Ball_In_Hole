@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="UTF-8">
+		<title>Moving Ball Illustration</title>
+		<link rel="stylesheet" type="text/css" href="style/movingBall.css">
+		<script src="js/movingBall.js"></script> 
+	</head>
+    <body>
+        <header id="header">
+            <span id="chronotime">00:00</span>
+        </header>
+        <div id="border"></div>
+        <!--<a id="fullscreenButton" class="fadable" href="javascript:onFullscreen(event);" style="display: none;"> � </a>-->
+        <canvas id="surface" width="1440" height="546"> � </canvas>
+        
+        <nav id="nav">
+            <form name="chronoForm">
+                <input  id ="start" type="button" name="startstop" value="start" onClick="chronoStart()" />
+                <input id ="reset" type="button" name="reset" value="reset" onClick="chronoReset()" />
+                <input id ="stop" type="button" name="reset" value="stop" onClick="chronoStop()" />
+            </form>
+        </nav>
+    </body>
+</html>
+
