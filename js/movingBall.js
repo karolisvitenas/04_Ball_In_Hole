@@ -6,6 +6,7 @@ var mouseDownInsideball;
 var touchDownInsideball;
 var movementTimer;
 var lastMouse, lastOrientation, lastTouch;
+
                             
 // Initialisation on opening of the window
 function init() {
@@ -53,6 +54,12 @@ function doLayout(event) {
         y:Math.round(winH/2),
         color:'rgba(164, 168, 57, 255)'
     };
+    hole = {
+        radius:radius,
+        x:Math.round(winW-100),
+        y:Math.round(winH-100),
+        color:'rgba(000, 0, 0, 225)'
+    };
 				
     renderBall();
 }
@@ -62,13 +69,15 @@ function renderBall() {
     var context = surface.getContext('2d');
     context.clearRect(0, 0, surface.width, surface.height);
 	
+    
+    context.arc(hole.x, hole.y, hole.radius+5, 0, 2 * Math.PI, false);
+    context.fillStyle = hole.color;
+    context.fill();
+    
     context.beginPath();
     context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI, false);
     context.fillStyle = ball.color;
     context.fill();
-    context.lineWidth = 1;
-    context.strokeStyle = ball.color;
-    context.stroke();		
 } 
 
 function onRenderUpdate(event) {
@@ -99,19 +108,29 @@ function onRenderUpdate(event) {
 }
 
 function moveBall(xDelta, yDelta) {
-    //mVelX += -xDelta;
-    //mVelY += -yDelta;
-   
+   if (pause == false){
     ball.x += xDelta;
     ball.y += yDelta;
     renderBall();
+    check();
+    }
 }
 
 function setBounds(xDelta, yDelta){
     if( ball.x<(ball.radius-xDelta)+1 || ball.x>winW-(ball.radius+xDelta)-1) xDelta=-xDelta;
     if( ball.y<(ball.radius-yDelta)+1+42 || ball.y>winH-35-(ball.radius+yDelta)-1) yDelta=-yDelta;
+    
+        moveBall(xDelta, yDelta);
+    
+}
 
-    moveBall(xDelta, yDelta);
+function check(){
+    var time;
+    //&& (ball.y > winH-85 && ball.y < winH))
+    if ((ball.x > winW-100 && ball.x < winW-85) && (ball.y > winH-115 && ball.y < winH-100)) {
+        alert('You won!' + document.getElementById("chronotime").innerHTML);
+        stopGame();
+    }
 }
 
 function onMouseMove(event) {
@@ -193,4 +212,65 @@ function onTouchUp(event) {
 function onDeviceOrientationChange(event) {
     lastOrientation.gamma = event.gamma;
     lastOrientation.beta = event.beta;
+}
+
+var startTime = 0
+var start = 0
+var end = 0
+var diff = 0
+var timerID = 0
+function chrono(){
+    end = new Date()
+    diff = end - start
+    diff = new Date(diff)
+    var sec = diff.getSeconds()
+    var min = diff.getMinutes()
+    if (min < 10){
+        min = "0" + min
+    }
+    if (sec < 10){
+        sec = "0" + sec
+    }
+    document.getElementById("chronotime").innerHTML = min + ":" + sec
+    time = min;
+    timerID = setTimeout("chrono()", 10)
+}
+function chronoStart(){
+    start = new Date()
+    chrono()
+    pause = false;
+}
+function chronoContinue(){
+    document.chronoForm.startstop.onclick = chronoPause
+    start = new Date()-diff
+    start = new Date(start)
+    chrono()
+}
+function chronoStop(){
+    document.getElementById("chronotime").innerHTML = "00:00"
+    //document.chronoForm.startstop.onclick = chronoStart
+    start = new Date()
+    doLayout()
+}
+function chronoStopReset(){
+    document.chronoForm.startstop.onclick = chronoStart
+}
+function chronoPause(){
+    document.chronoForm.startstop.onclick = chronoContinue
+    document.chronoForm.reset.onclick = chronoStopReset
+    clearTimeout(timerID)
+}
+
+//game functions
+function startGame(){
+     
+    chronoStart();
+}
+function stopGame(){
+    chronoStop();
+    pause = false;
+}
+function pauseGame(){
+    chronoPause();
+    pause = true;
 }
